@@ -30,14 +30,6 @@ public class PersonService {
         return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(Person::getEmail).collect(Collectors.toList());
     }
 
-    // get age of person
-    public int getAge(String date) {
-        LocalDate birthDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        LocalDate now = LocalDate.now();
-        return Math.abs(Period.between(birthDate, now).getYears());
-
-    }
-
     // get child and family
     public List<ChildAlertDTO> findAllChildByAddress(String address) {
         List<ChildAlertDTO> result = new ArrayList<>();
@@ -46,10 +38,10 @@ public class PersonService {
             List<Person> family = new ArrayList<>();
             MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByFirstNameAndLastName(person.getFirstName(), person.getLastName());
             ChildAlertDTO child = new ChildAlertDTO();
-            if (getAge(medicalRecord.getBirthdate()) < 18) {
+            if (medicalRecord.getAge(medicalRecord.getBirthdate()) < 18) {
                 child.setFirstName(person.getFirstName());
                 child.setLastname(person.getLastName());
-                child.setAge(getAge(medicalRecord.getBirthdate()));
+                child.setAge(medicalRecord.getAge(medicalRecord.getBirthdate()));
                 for (Person adult : personList) {
                     if (!adult.getFirstName().equals(person.getFirstName())) {
                         family.add(person);
@@ -75,7 +67,7 @@ public class PersonService {
             persoInfo.setEMail(person.getEmail());
             persoInfo.setMedications(medicalRecord.getMedications());
             persoInfo.setAllergies(medicalRecord.getAllergies());
-            persoInfo.setAge(getAge(medicalRecord.getBirthdate()));
+            persoInfo.setAge(medicalRecord.getAge(medicalRecord.getBirthdate()));
             result.add(persoInfo);
         }
         return result;

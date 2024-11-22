@@ -19,13 +19,11 @@ public class FireStationService {
     private final FireStationRepository fireStationRepository;
     private final PersonRepository personRepository;
     private final MedicalRecordRepository medicalRecordRepository;
-    private final PersonService personService;
 
-    public FireStationService(FireStationRepository fireStationRepository, PersonRepository personRepository, MedicalRecordRepository medicalRecordRepository, PersonService personService) {
+    public FireStationService(FireStationRepository fireStationRepository, PersonRepository personRepository, MedicalRecordRepository medicalRecordRepository) {
         this.fireStationRepository = fireStationRepository;
         this.personRepository = personRepository;
         this.medicalRecordRepository = medicalRecordRepository;
-        this.personService = personService;
     }
 
     public List<FireStation> findAllFireStationsByNumber(Integer number) {
@@ -61,7 +59,7 @@ public class FireStationService {
                 if (firstation.getAddress().equals(person.getAddress())) {
                     PersonDTO personSelect = new PersonDTO();
                     MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByFirstNameAndLastName(person.getFirstName(), person.getLastName());
-                    if (personService.getAge(medicalRecord.getBirthdate()) > 18) {
+                    if (medicalRecord.getAge(medicalRecord.getBirthdate()) > 18) {
                         adult++;
                     } else {
                         child++;
@@ -93,7 +91,7 @@ public class FireStationService {
             personSelect.setFirstName(person.getFirstName());
             personSelect.setLastName(person.getLastName());
             personSelect.setPhone(person.getPhone());
-            personSelect.setAge(personService.getAge(medicalRecord.getBirthdate()));
+            personSelect.setAge(medicalRecord.getAge(medicalRecord.getBirthdate()));
             personSelect.setMedications(medicalRecord.getMedications());
             personSelect.setAllergies(medicalRecord.getAllergies());
             personSelect.setFireStationNumber(firstationNumber);
@@ -117,6 +115,7 @@ public class FireStationService {
                     MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByFirstNameAndLastName(person.getFirstName(), person.getLastName());
                     family.setFirstName(person.getFirstName());
                     family.setLastName(person.getLastName());
+                    family.setAge(medicalRecord.getAge(medicalRecord.getBirthdate()));
                     family.setPhone(person.getPhone());
                     family.setAllergies(medicalRecord.getAllergies());
                     family.setMedications(medicalRecord.getMedications());
